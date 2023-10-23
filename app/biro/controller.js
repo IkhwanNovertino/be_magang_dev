@@ -40,5 +40,30 @@ module.exports = {
       res.redirect('/biro')
     }
   },
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const biro = await Biro.findById(id);
 
+      res.render(`${path}/edit`, {
+        title: 'Ubah Bidang Kegiatan',
+        biro
+      })
+    } catch (err) {
+      console.log(`error di viewEdit controller biro >>${err}`);
+      res.redirect('/biro')
+    }
+  },
+  actionEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+
+      await Biro.findOneAndUpdate({ _id: id }, { name: name });
+      res.redirect('/biro');
+    } catch (err) {
+      console.log(`error di actionEdit controller biro >>${err}`);
+      res.redirect('/biro')
+    }
+  },
 }
