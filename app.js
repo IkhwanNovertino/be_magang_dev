@@ -1,14 +1,25 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const methodOverride = require('method-override')
+const session = require('express-session')
+const flash = require('connect-flash');
 
-var dashboardRouter = require('./app/dashboard/router.js');
-var biroRouter = require('./app/biro/router.js');
+const dashboardRouter = require('./app/dashboard/router.js');
+const biroRouter = require('./app/biro/router.js');
 
-var app = express();
+const app = express();
+
+//konfig express-session dan flash
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}))
+app.use(flash());
 
 app.use(methodOverride('_method'))
 

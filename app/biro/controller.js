@@ -5,14 +5,24 @@ const path = 'admin/biro';
 module.exports = {
   index: async (req, res) => {
     try {
+      const alertMessage = req.flash('alertMessage');
+      const alertStatus = req.flash('alertStatus');
+      const alert = { message: alertMessage, status: alertStatus };
+
       const biro = await Biro.find();
+
       res.render(`${path}/view_biro`, {
         title: 'Bidang Kegiatan',
-        biro
+        biro,
+        alert
       })
     } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+      res.redirect('/biro')
+
       console.log(`error di index controller biro >>${err}`);
-      res.redirect('/')
+      // res.redirect('/')
     }
   },
   viewCreate: async (req, res) => {
@@ -21,6 +31,9 @@ module.exports = {
         title: 'Tambah Bidang Kegiatan'
       })
     } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+
       console.log(`error di viewCreate controller biro >>${err}`);
       res.redirect('/biro')
     }
@@ -32,10 +45,16 @@ module.exports = {
       let biro = await Biro({ name });
       await biro.save();
 
+      req.flash('alertMessage', 'Berhasil Menambah Bidang Kegiatan');
+      req.flash('alertStatus', 'success');
+
       res.redirect('/biro');
 
       // res.send(req.body);
     } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+
       console.log(`error di actionCreate controller biro >>${err}`);
       res.redirect('/biro')
     }
@@ -50,6 +69,9 @@ module.exports = {
         biro
       })
     } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+
       console.log(`error di viewEdit controller biro >>${err}`);
       res.redirect('/biro')
     }
@@ -60,9 +82,33 @@ module.exports = {
       const { name } = req.body;
 
       await Biro.findOneAndUpdate({ _id: id }, { name: name });
+
+      req.flash('alertMessage', 'Berhasil Mengubah Bidang Kegiatan');
+      req.flash('alertStatus', 'success');
+
       res.redirect('/biro');
     } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+
       console.log(`error di actionEdit controller biro >>${err}`);
+      res.redirect('/biro')
+    }
+  },
+  actionDelete: async (req, res) => {
+    try {
+      const { id } = req.params;
+      await Biro.findOneAndRemove({ _id: id });
+
+      req.flash('alertMessage', 'Berhasil Menghapus Bidang Kegiatan');
+      req.flash('alertStatus', 'success');
+
+      res.redirect('/biro');
+    } catch (err) {
+      req.flash('alertMessage', `${err.message}`);
+      req.flash('alertStatus', 'danger');
+
+      console.log(`error di actionDelete controller biro >>${err}`);
       res.redirect('/biro')
     }
   },
