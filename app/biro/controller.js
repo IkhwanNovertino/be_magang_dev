@@ -5,8 +5,10 @@ const path = 'admin/biro';
 module.exports = {
   index: async (req, res) => {
     try {
+      const biro = await Biro.find();
       res.render(`${path}/view_biro`, {
-        title: 'Bidang Kegiatan'
+        title: 'Bidang Kegiatan',
+        biro
       })
     } catch (err) {
       console.log(`error di index controller biro >>${err}`);
@@ -33,11 +35,10 @@ module.exports = {
       res.redirect('/biro');
 
       // res.send(req.body);
-
     } catch (err) {
       console.log(`error di actionCreate controller biro >>${err}`);
       res.redirect('/biro')
     }
   },
-  
+
 }
